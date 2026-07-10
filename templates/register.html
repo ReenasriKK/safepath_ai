@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}Register - SafePath AI{% endblock %}
+
+{% block content %}
+<div class="auth-container py-5">
+    <div class="row justify-content-center align-items-center gx-5">
+        <div class="col-lg-5 d-none d-lg-block">
+            <div class="auth-side-panel glass-effect rounded p-5 h-100">
+                <h3 class="fw-bold mb-4">Join the SafePath community.</h3>
+                <p class="text-muted mb-4">
+                    Create an account to log hazards, save routes, and share road safety insights with your local network.
+                </p>
+                <ul class="list-unstyled auth-feature-list">
+                    <li><i class="fas fa-check-circle text-success me-2"></i> Personalized safety analytics</li>
+                    <li><i class="fas fa-check-circle text-success me-2"></i> Hazard detection history</li>
+                    <li><i class="fas fa-check-circle text-success me-2"></i> Community-sourced updates</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="auth-card glass-effect rounded p-4 p-md-5">
+                <div class="text-center mb-4">
+                    <span class="auth-badge auth-badge-alt mb-3">
+                        <i class="fas fa-user-plus"></i>
+                    </span>
+                    <h2 class="fw-bold">Create Your Account</h2>
+                    <p class="text-muted">Secure access to road safety analytics and safe route planning.</p>
+                </div>
+
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="username" name="username" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary w-100 btn-lg">
+                        <i class="fas fa-user-plus me-2"></i> Register
+                    </button>
+                </form>
+
+                <div class="text-center mt-4">
+                    <p class="text-muted mb-2">Already have an account?</p>
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-outline-primary w-100">
+                        <i class="fas fa-sign-in-alt me-2"></i> Login Now
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}Emergency - SafePath AI{% endblock %}
+
+{% block content %}
+<div class="emergency-container py-5">
+    <div class="row g-4">
+        <div class="col-lg-7">
+            <div class="emergency-panel glass-effect rounded p-4 p-md-5">
+                <div class="d-flex align-items-center justify-content-between mb-4">
+                    <div>
+                        <h1 class="fw-bold mb-2"><i class="fas fa-bell-on text-danger"></i> Emergency Alert</h1>
+                        <p class="text-muted mb-0">Notify your emergency contacts and display your last known location instantly.</p>
+                    </div>
+                    <span class="badge bg-danger px-3 py-2">Priority</span>
+                </div>
+
+                <div class="alert alert-danger mb-4">
+                    <strong>Emergency mode active.</strong> Press the button below to send an alert to your saved contacts and show your location.
+                </div>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-sm-6">
+                        <div class="status-card glass-effect p-3 rounded text-center">
+                            <h6 class="text-muted">Last Alert</h6>
+                            <p class="fs-4 mb-0">Never</p>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="status-card glass-effect p-3 rounded text-center">
+                            <h6 class="text-muted">Saved Contacts</h6>
+                            <p class="fs-4 mb-0">{{ contacts|length }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <form method="POST">
+                    <button type="submit" class="btn btn-danger btn-lg w-100">
+                        <i class="fas fa-siren-on me-2"></i> Send Emergency Alert
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="contacts-summary glass-effect rounded p-4">
+                <h5 class="fw-bold mb-4"><i class="fas fa-phone"></i> Your Emergency Contacts</h5>
+                {% if contacts %}
+                    <ul class="list-group list-group-flush">
+                        {% for contact in contacts %}
+                        <li class="list-group-item bg-transparent border-0 p-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1 fw-bold">{{ contact.name }}</h6>
+                                    <p class="mb-1 text-muted">{{ contact.relationship }}</p>
+                                    <small class="text-primary">{{ contact.phone }}</small>
+                                </div>
+                                <span class="badge bg-success">Saved</span>
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <div class="alert alert-info mb-0">
+                        No emergency contacts yet. Add them from your Profile page.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

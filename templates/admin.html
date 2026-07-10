@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - SafePath AI{% endblock %}
+
+{% block content %}
+<div class="admin-container">
+    <h1 class="mb-4 fw-bold">
+        <i class="fas fa-crown"></i> Admin Dashboard
+    </h1>
+
+    <!-- Stats -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-3">
+            <div class="stat-card glass-effect p-4 rounded text-center">
+                <div class="stat-icon mb-3">
+                    <i class="fas fa-users fa-2x text-primary"></i>
+                </div>
+                <h5 class="text-muted">Total Users</h5>
+                <h2 class="fw-bold">{{ users|length }}</h2>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card glass-effect p-4 rounded text-center">
+                <div class="stat-icon mb-3">
+                    <i class="fas fa-file-alt fa-2x text-warning"></i>
+                </div>
+                <h5 class="text-muted">Total Reports</h5>
+                <h2 class="fw-bold">{{ reports|length }}</h2>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card glass-effect p-4 rounded text-center">
+                <div class="stat-icon mb-3">
+                    <i class="fas fa-check-circle fa-2x text-success"></i>
+                </div>
+                <h5 class="text-muted">Verified Reports</h5>
+                <h2 class="fw-bold">{{ reports|selectattr('status', 'equalto', 'verified')|list|length }}</h2>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card glass-effect p-4 rounded text-center">
+                <div class="stat-icon mb-3">
+                    <i class="fas fa-hourglass-half fa-2x text-info"></i>
+                </div>
+                <h5 class="text-muted">Pending Reports</h5>
+                <h2 class="fw-bold">{{ reports|selectattr('status', 'equalto', 'pending')|list|length }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <!-- Users Table -->
+    <div class="row mb-5">
+        <div class="col-md-12">
+            <div class="users-table glass-effect p-4 rounded">
+                <h5 class="fw-bold mb-4">
+                    <i class="fas fa-users"></i> Registered Users
+                </h5>
+                <div class="table-responsive">
+                    <table class="table table-dark">
+                        <thead>
+                            <tr>
+                                <th>Username</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Joined</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in users %}
+                            <tr>
+                                <td>
+                                    <i class="fas fa-user-circle"></i> {{ user.username }}
+                                </td>
+                                <td>{{ user.email }}</td>
+                                <td>
+                                    {% if user.role == 'admin' %}
+                                    <span class="badge bg-danger">Admin</span>
+                                    {% else %}
+                                    <span class="badge bg-primary">User</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ user.created_at.strftime('%Y-%m-%d') }}</td>
+                                <td>
+                                    <span class="badge bg-success">Active</span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reports Management -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="reports-table glass-effect p-4 rounded">
+                <h5 class="fw-bold mb-4">
+                    <i class="fas fa-file-alt"></i> Community Reports
+                </h5>
+                <div class="table-responsive">
+                    <table class="table table-dark">
+                        <thead>
+                            <tr>
+                                <th>Category</th>
+                                <th>User</th>
+                                <th>Description</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for report in reports %}
+                            <tr>
+                                <td>
+                                    <span class="badge bg-info">{{ report.category }}</span>
+                                </td>
+                                <td>{{ report.user.username }}</td>
+                                <td>
+                                    <small>{{ report.description[:50] }}...</small>
+                                </td>
+                                <td>
+                                    {% if report.status == 'verified' %}
+                                    <span class="badge bg-success">Verified</span>
+                                    {% elif report.status == 'resolved' %}
+                                    <span class="badge bg-info">Resolved</span>
+                                    {% else %}
+                                    <span class="badge bg-warning">Pending</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ report.timestamp.strftime('%Y-%m-%d') }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

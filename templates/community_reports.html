@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+
+{% block title %}Community Reports - SafePath AI{% endblock %}
+
+{% block content %}
+<div class="community-reports-container py-5">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start mb-4 gap-3">
+        <div>
+            <h1 class="mb-2 fw-bold">
+                <i class="fas fa-users"></i> Community Reports
+            </h1>
+            <p class="text-muted">
+                Submit local hazard reports, view community safety updates, and help other drivers choose safer routes.
+            </p>
+        </div>
+        <div class="d-flex gap-3">
+            <div class="report-summary-card glass-effect p-3 rounded text-center">
+                <h6 class="mb-2 text-muted">Total Reports</h6>
+                <p class="fs-3 fw-bold mb-0">{{ report_stats.total }}</p>
+            </div>
+            <div class="report-summary-card glass-effect p-3 rounded text-center">
+                <h6 class="mb-2 text-muted">Verified</h6>
+                <p class="fs-3 fw-bold mb-0 text-success">{{ report_stats.verified }}</p>
+            </div>
+            <div class="report-summary-card glass-effect p-3 rounded text-center">
+                <h6 class="mb-2 text-muted">Pending</h6>
+                <p class="fs-3 fw-bold mb-0 text-warning">{{ report_stats.pending }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-4">
+            <div class="report-form glass-effect p-4 rounded">
+                <h5 class="fw-bold mb-4">
+                    <i class="fas fa-plus-circle"></i> Submit New Report
+                </h5>
+                <form method="POST" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="category" class="form-label">Category</label>
+                        <select class="form-control" id="category" name="category" required>
+                            <option value="">Select Category</option>
+                            <option value="Pothole">Pothole</option>
+                            <option value="Flooded Road">Flooded Road</option>
+                            <option value="Road Block">Road Block</option>
+                            <option value="Garbage">Garbage</option>
+                            <option value="Fallen Tree">Fallen Tree</option>
+                            <option value="Construction">Construction Area</option>
+                            <option value="Low Visibility">Low Visibility</option>
+                            <option value="Damaged Road">Damaged Road</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea class="form-control" id="description" name="description" rows="4" placeholder="Describe the hazard" required></textarea>
+                    </div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-6">
+                            <label for="lat" class="form-label">Latitude</label>
+                            <input type="number" class="form-control" id="lat" name="lat" step="0.0001" placeholder="e.g., 28.6139">
+                        </div>
+                        <div class="col-6">
+                            <label for="lng" class="form-label">Longitude</label>
+                            <input type="number" class="form-control" id="lng" name="lng" step="0.0001" placeholder="e.g., 77.2090">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="photo" class="form-label">Photo</label>
+                        <input type="file" class="form-control" id="photo" name="photo" accept="image/*">
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-paper-plane me-2"></i> Submit Report
+                    </button>
+                </form>
+            </div>
+
+            <div class="report-category-summary glass-effect p-4 rounded mt-4">
+                <h5 class="fw-bold mb-3">Top Categories</h5>
+                <ul class="list-group list-group-flush">
+                    {% for category, count in category_counts.items() %}
+                    <li class="list-group-item bg-transparent border-0 px-0 py-2 d-flex justify-content-between align-items-center">
+                        <span>{{ category }}</span>
+                        <span class="badge bg-secondary">{{ count }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="reports-list">
+                {% if reports %}
+                    {% for report in reports %}
+                    <div class="report-card glass-effect rounded mb-4 overflow-hidden">
+                        <div class="row g-0 align-items-center">
+                            <div class="col-md-8 p-4">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <div>
+                                        <h5 class="fw-bold mb-1">{{ report.category or 'Other' }}</h5>
+                                        <p class="text-muted mb-2">{{ report.description }}</p>
+                                        <div class="d-flex flex-wrap gap-2">
+                                            <span class="badge report-status {% if report.status == 'verified' %}bg-success{% elif report.status == 'resolved' %}bg-info{% else %}bg-warning text-dark{% endif %}">
+                                                {{ report.status|capitalize }}
+                                            </span>
+                                            <span class="badge bg-dark text-white">{{ report.user.username }}</span>
+                                        </div>
+                                    </div>
+                                    <small class="text-muted">{{ report.timestamp.strftime('%Y-%m-%d %H:%M') }}</small>
+                                </div>
+
+                                <div class="report-meta d-flex flex-wrap gap-3 text-muted mb-2">
+                                    {% if report.location_lat and report.location_lng %}
+                                    <div>
+                                        <i class="fas fa-map-marker-alt me-1"></i>
+                                        <a href="https://www.google.com/maps/search/?api=1&query={{ report.location_lat }},{{ report.location_lng }}" class="text-muted" target="_blank">
+                                            {{ report.location_lat|round(4) }}, {{ report.location_lng|round(4) }}
+                                        </a>
+                                    </div>
+                                    {% endif %}
+                                    <div>
+                                        <i class="fas fa-flag"></i> Reported hazard
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                {% if report.photo_path %}
+                                <div class="report-image" style="background-image:url('{{ url_for('main.uploaded_file', filename=report.photo_path) }}')"></div>
+                                {% else %}
+                                <div class="report-image report-image-empty d-flex align-items-center justify-content-center">
+                                    <span class="text-muted">No photo attached</span>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i> No reports yet. Be the first to report a hazard!
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

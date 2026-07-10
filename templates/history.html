@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}Trip History - SafePath AI{% endblock %}
+
+{% block content %}
+<div class="history-container">
+    <h1 class="mb-4 fw-bold">
+        <i class="fas fa-history"></i> Trip History
+    </h1>
+
+    {% if trips %}
+    <div class="table-responsive mb-5">
+        <table class="table table-dark glass-effect">
+            <thead>
+                <tr>
+                    <th>Date & Time</th>
+                    <th>Source</th>
+                    <th>Destination</th>
+                    <th>Safety Score</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for trip in trips %}
+                <tr>
+                    <td>
+                        <i class="fas fa-calendar"></i> {{ trip.timestamp.strftime('%Y-%m-%d %H:%M') }}
+                    </td>
+                    <td>{{ trip.source }}</td>
+                    <td>{{ trip.destination }}</td>
+                    <td>
+                        <div class="progress" style="height: 20px; width: 150px;">
+                            <div class="progress-bar {% if trip.safety_score > 80 %}bg-success{% elif trip.safety_score > 50 %}bg-warning{% else %}bg-danger{% endif %}" 
+                                 role="progressbar" 
+                                 style="width: {{ trip.safety_score }}%">
+                                {{ trip.safety_score|int }}%
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        {% if trip.safety_score > 80 %}
+                        <span class="badge bg-success">Safe</span>
+                        {% elif trip.safety_score > 50 %}
+                        <span class="badge bg-warning">Moderate</span>
+                        {% else %}
+                        <span class="badge bg-danger">Risky</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle"></i> No trips recorded yet. Start planning a route to see your history!
+    </div>
+    {% endif %}
+
+    <h2 class="mt-5 mb-4 fw-bold">
+        <i class="fas fa-exclamation-circle"></i> Hazard Detection History
+    </h2>
+
+    {% if hazard_records %}
+    <div class="table-responsive">
+        <table class="table table-dark glass-effect">
+            <thead>
+                <tr>
+                    <th>Date & Time</th>
+                    <th>Primary Hazard</th>
+                    <th>Safety Level</th>
+                    <th>Risk Score</th>
+                    <th>Recommendation</th>
+                    <th>Preview</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in hazard_records %}
+                <tr>
+                    <td>{{ record.timestamp.strftime('%Y-%m-%d %H:%M') }}</td>
+                    <td>{{ record.primary_hazard or 'No hazards' }}</td>
+                    <td>
+                        <span class="badge {% if record.safety_level == 'Dangerous' %}bg-danger{% elif record.safety_level == 'Moderate' %}bg-warning{% else %}bg-success{% endif %}">
+                            {{ record.safety_level or 'Unknown' }}
+                        </span>
+                    </td>
+                    <td>{{ record.risk_score }}</td>
+                    <td>{{ record.safety_recommendation }}</td>
+                    <td>
+                        {% if record.detected_image_path %}
+                        <a href="{{ url_for('main.uploaded_file', filename=record.detected_image_path) }}" target="_blank" class="btn btn-sm btn-outline-light">
+                            View
+                        </a>
+                        {% else %}
+                        <span class="text-muted">N/A</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle"></i> No hazard detections saved yet. Try the Detect Hazards page to generate your first report.
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

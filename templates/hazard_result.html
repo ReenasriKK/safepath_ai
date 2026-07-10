@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+
+{% block title %}Detection Results - SafePath AI{% endblock %}
+
+{% block content %}
+<div class="hazard-results-container">
+    <h1 class="mb-4 fw-bold">
+        <i class="fas fa-check-circle"></i> Detection Results
+    </h1>
+
+    <!-- Risk Score Card -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="risk-card glass-effect p-4 rounded">
+                <div class="row align-items-center">
+                    <div class="col-md-3 text-center">
+                        <h2 class="fw-bold">Risk Score</h2>
+                        <h1 class="{% if risk_score > 50 %}text-danger{% elif risk_score > 20 %}text-warning{% else %}text-success{% endif %}">
+                            {{ risk_score }}
+                        </h1>
+                    </div>
+                    <div class="col-md-3 text-center">
+                        <h5 class="fw-bold">Safety Level</h5>
+                        <h3>
+                            {% if safety_level == 'Dangerous' %}
+                            <span class="badge bg-danger">{{ safety_level }}</span>
+                            {% elif safety_level == 'Moderate' %}
+                            <span class="badge bg-warning">{{ safety_level }}</span>
+                            {% else %}
+                            <span class="badge bg-success">{{ safety_level }}</span>
+                            {% endif %}
+                        </h3>
+                    </div>
+                    <div class="col-md-3 text-center">
+                        <h5 class="fw-bold">Hazards Found</h5>
+                        <h3 class="text-primary">{{ detections|length }}</h3>
+                    </div>
+                    <div class="col-md-3 text-center">
+                        <a href="{{ url_for('ai.hazard_detection') }}" class="btn btn-primary">
+                            <i class="fas fa-redo"></i> Analyze Another
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Image Comparison -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-6">
+            <div class="image-card glass-effect p-3 rounded">
+                <h6 class="fw-bold mb-3">Original Image</h6>
+                <img src="{{ url_for('main.uploaded_file', filename=original) }}" alt="Original" class="img-fluid rounded" style="max-height: 400px;">
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="image-card glass-effect p-3 rounded">
+                <h6 class="fw-bold mb-3">Detected Hazards</h6>
+                <img src="{{ url_for('main.uploaded_file', filename=detected) }}" alt="Detected" class="img-fluid rounded" style="max-height: 400px;">
+            </div>
+        </div>
+    </div>
+
+    <!-- Detections Table -->
+    {% if detections %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="detections-card glass-effect p-4 rounded">
+                <h5 class="fw-bold mb-3">
+                    <i class="fas fa-list"></i> Detected Objects
+                </h5>
+                <div class="table-responsive">
+                    <table class="table table-dark">
+                        <thead>
+                            <tr>
+                                <th>Hazard Type</th>
+                                <th>Confidence</th>
+                                <th>Risk Points</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for detection in detections %}
+                            <tr>
+                                <td>
+                                    <i class="fas fa-exclamation-triangle"></i> {{ detection.label }}
+                                </td>
+                                <td>
+                                    <div class="progress" style="height: 20px;">
+                                        <div class="progress-bar" role="progressbar" 
+                                             style="width: {{ detection.confidence * 100 }}%">
+                                            {{ (detection.confidence * 100)|int }}%
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-warning">{{ detection.risk }}</span>
+                                </td>
+                                <td>
+                                    {% if detection.confidence > 0.8 %}
+                                    <span class="badge bg-danger">Critical</span>
+                                    {% elif detection.confidence > 0.5 %}
+                                    <span class="badge bg-warning">Warning</span>
+                                    {% else %}
+                                    <span class="badge bg-info">Info</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="alert alert-success" role="alert">
+                <i class="fas fa-check-circle"></i> No hazards detected! The road appears to be safe.
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Recommendations -->
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="recommendations-card glass-effect p-4 rounded">
+                <h5 class="fw-bold mb-3">
+                    <i class="fas fa-lightbulb"></i> Recommendations
+                </h5>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-secondary text-white p-3 rounded h-100">
+                            <h6 class="fw-semibold">Safety Summary</h6>
+                            <p>{{ ai_explanation }}</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-dark text-white p-3 rounded h-100">
+                            <h6 class="fw-semibold">Action Plan</h6>
+                            <p>{{ suggested_action }}</p>
+                            <p class="mb-0"><strong>Recommended alternative:</strong> {{ alternative_recommendation }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-4">
+                        <div class="info-card glass-effect p-3 rounded text-center">
+                            <h6>Safety Level</h6>
+                            <span class="badge bg-info fs-6">{{ safety_level }}</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="info-card glass-effect p-3 rounded text-center">
+                            <h6>Detected Hazards</h6>
+                            <span class="badge bg-warning fs-6">{{ detections|length }}</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="info-card glass-effect p-3 rounded text-center">
+                            <h6>Primary Threats</h6>
+                            <span>{{ report_hazard_text }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

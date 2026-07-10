@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block title %}SafePath AI - Road Safety Made Smart{% endblock %}
+
+{% block content %}
+<div class="landing-page">
+    <section class="hero-section py-6">
+        <div class="container">
+            <div class="row align-items-center gy-5">
+                <div class="col-lg-6">
+                    <p class="eyebrow-text text-primary mb-3">AI Road Safety Platform</p>
+                    <h1 class="display-4 fw-bold mb-4">
+                        Protect your journey with intelligent hazard detection and safer routes.
+                    </h1>
+                    <p class="lead text-light mb-4">
+                        SafePath AI gives drivers and communities the visibility they need to avoid road hazards, navigate smarter, and share trusted safety updates.
+                    </p>
+
+                    <div class="d-flex flex-column flex-sm-row gap-3">
+                        {% if not current_user.is_authenticated %}
+                        <a href="{{ url_for('auth.login') }}" class="btn btn-primary btn-lg">
+                            <i class="fas fa-sign-in-alt me-2"></i> Login
+                        </a>
+                        <a href="{{ url_for('auth.register') }}" class="btn btn-outline-primary btn-lg">
+                            <i class="fas fa-user-plus me-2"></i> Register
+                        </a>
+                        {% else %}
+                        <a href="{{ url_for('main.dashboard') }}" class="btn btn-primary btn-lg">
+                            <i class="fas fa-tachometer-alt me-2"></i> Go to Dashboard
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="hero-card glass-effect rounded p-4 p-md-5">
+                        <div class="d-flex align-items-center justify-content-between mb-4">
+                            <div>
+                                <h5 class="fw-bold mb-1">Live Safety Monitor</h5>
+                                <p class="text-muted mb-0">Stay ahead of hazards with visual detection and community insight.</p>
+                            </div>
+                            <span class="badge bg-info text-dark">AI Powered</span>
+                        </div>
+                        <div class="hero-grid row g-3">
+                            <div class="col-6">
+                                <div class="mini-card p-3 rounded bg-dark text-white">
+                                    <h6 class="mb-2">99%</h6>
+                                    <p class="mb-0 text-muted">Accurate hazard scoring</p>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="mini-card p-3 rounded bg-dark text-white">
+                                    <h6 class="mb-2">7+ hazards</h6>
+                                    <p class="mb-0 text-muted">Detected automatically</p>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="mini-card p-3 rounded bg-dark text-white">
+                                    <h6 class="mb-2">Community reports</h6>
+                                    <p class="mb-0 text-muted">Share real conditions</p>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="mini-card p-3 rounded bg-dark text-white">
+                                    <h6 class="mb-2">Instant insights</h6>
+                                    <p class="mb-0 text-muted">Actionable safety advice</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="features-section py-5">
+        <div class="container">
+            <h2 class="text-center mb-5 fw-bold">Built for Safer Travel</h2>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="feature-card glass-effect p-4 rounded h-100">
+                        <div class="feature-icon mb-3">
+                            <i class="fas fa-camera fa-3x text-primary"></i>
+                        </div>
+                        <h5 class="fw-bold">Image-Based Hazard Detection</h5>
+                        <p class="text-muted">Upload road snapshots and the AI highlights potholes, debris, blocked lanes, and more.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card glass-effect p-4 rounded h-100">
+                        <div class="feature-icon mb-3">
+                            <i class="fas fa-route fa-3x text-success"></i>
+                        </div>
+                        <h5 class="fw-bold">Safer Route Comparison</h5>
+                        <p class="text-muted">Compare multiple paths and choose the one with the lowest hazard score.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card glass-effect p-4 rounded h-100">
+                        <div class="feature-icon mb-3">
+                            <i class="fas fa-users fa-3x text-warning"></i>
+                        </div>
+                        <h5 class="fw-bold">Community Hazard Reports</h5>
+                        <p class="text-muted">Leverage crowd-sourced updates to keep routes current and safe.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-section py-5 text-center">
+        <div class="container">
+            <div class="cta-card glass-effect rounded p-5">
+                <div class="row align-items-center">
+                    <div class="col-md-8 text-start">
+                        <h2 class="fw-bold mb-2">Start protecting every journey.</h2>
+                        <p class="text-muted mb-0">Create your account and begin analyzing road hazards with AI-backed recommendations.</p>
+                    </div>
+                    <div class="col-md-4 text-md-end mt-4 mt-md-0">
+                        <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg">
+                            Join SafePath AI
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

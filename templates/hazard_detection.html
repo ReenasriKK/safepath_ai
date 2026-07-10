@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block title %}Hazard Detection - SafePath AI{% endblock %}
+
+{% block content %}
+<div class="hazard-detection-container">
+    <h1 class="mb-4 fw-bold">
+        <i class="fas fa-camera"></i> Road Hazard Detection
+    </h1>
+
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="upload-card glass-effect p-5 rounded text-center">
+                <h5 class="fw-bold mb-4">Upload Road Image</h5>
+                
+                <form id="uploadForm" method="POST" enctype="multipart/form-data">
+                    <div class="upload-area mb-4" id="uploadArea">
+                        <i class="fas fa-cloud-upload-alt fa-3x text-primary mb-3"></i>
+                        <p class="text-muted">Drag and drop your image here or click to select</p>
+                        <input type="file" id="fileInput" name="file" accept="image/*" style="display: none;">
+                    </div>
+                    
+                    <div id="preview" style="display: none;">
+                        <img id="previewImg" src="" alt="Preview" style="max-width: 100%; border-radius: 10px; margin-bottom: 20px;">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-magic"></i> Run AI Detection
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="info-card glass-effect p-4 rounded">
+                <h5 class="fw-bold mb-3">
+                    <i class="fas fa-info-circle"></i> How It Works
+                </h5>
+                
+                <div class="info-step mb-3">
+                    <h6 class="fw-bold">1. Upload Image</h6>
+                    <p class="text-muted small">Upload a clear photo of the road from your device</p>
+                </div>
+                
+                <div class="info-step mb-3">
+                    <h6 class="fw-bold">2. AI Analysis</h6>
+                    <p class="text-muted small">Our YOLOv8 model analyzes the image in real-time</p>
+                </div>
+                
+                <div class="info-step mb-3">
+                    <h6 class="fw-bold">3. Hazard Detection</h6>
+                    <p class="text-muted small">Detects potholes, floods, obstacles, and more</p>
+                </div>
+                
+                <div class="info-step">
+                    <h6 class="fw-bold">4. Risk Assessment</h6>
+                    <p class="text-muted small">Get a comprehensive risk score and recommendations</p>
+                </div>
+
+                <hr class="text-muted my-4">
+
+                <h6 class="fw-bold mb-3">Detectable Hazards</h6>
+                <div class="hazard-list">
+                    <span class="badge bg-danger me-2 mb-2">Pothole</span>
+                    <span class="badge bg-danger me-2 mb-2">Flooded Road</span>
+                    <span class="badge bg-warning me-2 mb-2">Road Block</span>
+                    <span class="badge bg-warning me-2 mb-2">Fallen Tree</span>
+                    <span class="badge bg-info me-2 mb-2">Construction</span>
+                    <span class="badge bg-secondary me-2 mb-2">Garbage</span>
+                    <span class="badge bg-secondary me-2 mb-2">Low Visibility</span>
+                    <span class="badge bg-secondary mb-2">Damaged Road</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const uploadArea = document.getElementById('uploadArea');
+    const fileInput = document.getElementById('fileInput');
+    const preview = document.getElementById('preview');
+    const previewImg = document.getElementById('previewImg');
+
+    // Click to upload
+    uploadArea.addEventListener('click', () => fileInput.click());
+
+    // Drag and drop
+    uploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadArea.style.borderColor = '#0d6efd';
+    });
+
+    uploadArea.addEventListener('dragleave', () => {
+        uploadArea.style.borderColor = '#ccc';
+    });
+
+    uploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            fileInput.files = files;
+            handleFileSelect();
+        }
+    });
+
+    // File selection
+    fileInput.addEventListener('change', handleFileSelect);
+
+    function handleFileSelect() {
+        const file = fileInput.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                previewImg.src = e.target.result;
+                preview.style.display = 'block';
+                uploadArea.style.display = 'none';
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+</script>
+{% endblock %}
