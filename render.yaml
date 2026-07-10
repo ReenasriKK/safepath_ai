@@ -5,11 +5,9 @@ services:
     region: oregon
     plan: starter
     buildCommand: "pip install -r requirements.txt"
-    startCommand: "python app.py"
+    startCommand: "gunicorn app:app --bind 0.0.0.0:$PORT"
     autoDeploy: true
     repo: https://github.com/ReenasriKK/safepath_ai
     envVars:
       - key: FLASK_ENV
         value: production
-      - key: PORT
-        value: 10000
