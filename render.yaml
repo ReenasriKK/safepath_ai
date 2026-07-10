@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: safepath-ai
+    env: python
+    region: oregon
+    plan: starter
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "python app.py"
+    autoDeploy: true
+    repo: https://github.com/ReenasriKK/safepath_ai
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: PORT
+        value: 10000
