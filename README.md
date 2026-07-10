@@ -138,7 +138,22 @@ To set up and run SafePath AI locally, follow these steps:
 
     The application will be accessible at `http://127.0.0.1:5000`.
 
-## 11. Project Structure
+## 12. Render Deployment
+
+To deploy on Render, use the GitHub repo and a Render Web Service.
+
+1.  Connect Render to `https://github.com/ReenasriKK/safepath_ai`.
+2.  Use `Python` as the environment.
+3.  Build command: `pip install -r requirements.txt`
+4.  Start command: `python app.py`
+5.  Set environment variables in Render:
+    - `FLASK_ENV=production`
+    - `DATABASE_URL` to your managed database connection string (recommended)
+    - `PORT` will normally be provided by Render automatically.
+
+> Note: The app falls back to `sqlite:///database.db` when `DATABASE_URL` is not set, which is okay for local testing but not ideal for production persistence.
+
+## 13. Project Structure
 
 ```
 SafePathAI/
